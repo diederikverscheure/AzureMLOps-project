@@ -1,36 +1,33 @@
 import numpy as np
-import cv2
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, BatchNormalization, Conv2D, MaxPooling2D, Flatten, Activation, Dropout
 from tensorflow.keras.utils import to_categorical
-
 from sklearn.preprocessing import LabelEncoder
+
 from typing import List
+from scipy.signal import savgol_filter
+from scipy.interpolate import interp1d
+import matplotlib.pyplot as plt
 
-def getTargets(filepaths: List[str]) -> List[str]:
-    labels = [fp.split('/')[-1].split('_')[0] for fp in filepaths] # Get only the animal name
+def getTargets(df):
+    return np.hstack((df['presence_living'].values,df['presence_bedroom'].values))
 
-    return labels
-
-def encodeLabels(y_train: List, y_test: List):
-    label_encoder = LabelEncoder()
-    y_train_labels = label_encoder.fit_transform(y_train)
-    y_test_labels = label_encoder.transform(y_test)
-
-    y_train_1h = to_categorical(y_train_labels)
-    y_test_1h = to_categorical(y_test_labels)
-
-    LABELS = label_encoder.classes_
-    print(f"{LABELS} -- {label_encoder.transform(LABELS)}")
-
-    return LABELS, y_train_1h, y_test_1h
-
-def getFeatures(filepaths: List[str]) -> np.array:
-    images = []
-    for imagePath in filepaths:
-        image = cv2.imread(imagePath)
-        images.append(image)
-    return np.array(images)
+def smooth(index,y,derivative=1):
+    dt = (index-index[0]).total_seconds()
+    dtr = np.linspace(dt[0],dt[-1],len(dt))
+    f = interp1d(dt,y,'linear')
+    dxr = savgol_filter(f(dtr),101,1,derivative)
+    fr = interp1d(dtr,dxr,'linear')
+    dx = fr(dt)
+    return dx
+    
+def getFeatures(df):
+    df['delta_living']= df['co2_living']-df['co2_outside']
+    df['delta_bedroom'] = df['co2_bedroom']-df['co2_outside']
+    df['deriv_living'] = smooth(df.index,df['co2_living'],derivative=1)
+    df['deriv_bedroom'] = smooth(df.index,df['co2_bedroom'],derivative=1)
+    return np.vstack((df[['delta_living','deriv_living']].values,
+                      df[['delta_bedroom','deriv_bedroom']].values))
 
 
 def buildModel(inputShape: tuple, classes: int) -> Sequential:

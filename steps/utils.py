@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Jan 24 15:07:34 2022
+
+@author: dve
+"""
+
 import os
 import numpy as np
 import json

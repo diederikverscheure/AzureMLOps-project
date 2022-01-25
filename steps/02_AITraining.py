@@ -8,23 +8,21 @@ import random
 import shutil
 from typing import List, Tuple
 
-from utils import connectWithAzure
+from steps.utils import connectWithAzure
 
 from azureml.core import ScriptRunConfig, Experiment, Dataset
 from azureml.core.compute import ComputeTarget, AmlCompute
 from azureml.core.environment import Environment
 from azureml.core.conda_dependencies import CondaDependencies
 
-import cv2
 from dotenv import load_dotenv
 
 
 
 # When you work locally, you can use a .env file to store all your environment variables.
 # This line read those in.
-load_dotenv()
+load_dotenv('.env',override=True)
 
-ANIMALS = os.environ.get('ANIMALS').split(',')
 SEED = int(os.environ.get('RANDOM_SEED'))
 
 INITIAL_LEARNING_RATE = float(os.environ.get('INITIAL_LEARNING_RATE')) # Float value
@@ -32,10 +30,11 @@ MAX_EPOCHS = int(os.environ.get('MAX_EPOCHS'))
 BATCH_SIZE = int(os.environ.get('BATCH_SIZE'))
 PATIENCE = int(os.environ.get('PATIENCE'))
 MODEL_NAME = os.environ.get('MODEL_NAME')
+MODEL_TYPE = os.environ.get('MODEL_TYPE')
 
 COMPUTE_NAME = os.environ.get("AML_COMPUTE_CLUSTER_NAME", "cpu-cluster")
-COMPUTE_MIN_NODES = os.environ.get("AML_COMPUTE_CLUSTER_MIN_NODES", 0)
-COMPUTE_MAX_NODES = os.environ.get("AML_COMPUTE_CLUSTER_MAX_NODES", 4)
+COMPUTE_MIN_NODES = int(os.environ.get("AML_COMPUTE_CLUSTER_MIN_NODES", 0))
+COMPUTE_MAX_NODES = int(os.environ.get("AML_COMPUTE_CLUSTER_MAX_NODES", 4))
 
 # This example uses CPU VM. For using GPU VM, set SKU to STANDARD_NC6
 VM_SIZE = os.environ.get("AML_COMPUTE_CLUSTER_SKU", "STANDARD_D2_V2")
@@ -97,14 +96,15 @@ def prepareTraining(ws, env, compute_target) -> Tuple[Experiment, ScriptRunConfi
 
     args = [
         # You can set these to .as_mount() when not training on local machines, but this should also work.
-    '--training-folder', datasets[train_set_name].as_download('./data/train'), # Currently, this will always take the last version. You can search a way to specify a version if you want to
-    '--testing-folder', datasets[test_set_name].as_download('./data/test'), # Currently, this will always take the last version. You can search a way to specify a version if you want to
+    '--training-folder', datasets[train_set_name].as_download('./data/training_data'), # Currently, this will always take the last version. You can search a way to specify a version if you want to
+    '--testing-folder', datasets[test_set_name].as_download('./data/testing_data'), # Currently, this will always take the last version. You can search a way to specify a version if you want to        
     '--max-epochs', MAX_EPOCHS,
     '--seed', SEED,
     '--initial-learning-rate', INITIAL_LEARNING_RATE,
     '--batch-size', BATCH_SIZE,
     '--patience', PATIENCE,
-    '--model-name', MODEL_NAME]
+    '--model-name', MODEL_NAME,
+    '--model-type', MODEL_TYPE]
 
     script_run_config = ScriptRunConfig(source_directory=script_folder,
                     script='train.py',
@@ -120,14 +120,17 @@ def prepareTraining(ws, env, compute_target) -> Tuple[Experiment, ScriptRunConfi
 def downloadAndRegisterModel(ws, run):
     model_path = 'outputs/' + MODEL_NAME
 
+    print('Downloading',model_path)
     datasets = Dataset.get_all(workspace=ws) # Get all the datasets
     test_set_name = os.environ.get('TEST_SET_NAME')
 
+    print(run)
     run.download_files(prefix=model_path)
-    run.register_model(MODEL_NAME,
+    run.register_model(MODEL_TYPE,
                 model_path=model_path,
-                tags={'animals': ','.join(ANIMALS), 'AI-Model': 'CNN', 'GIT_SHA': os.environ.get('GIT_SHA')},
-                description="Image classification on animals",
+                tags={'type': MODEL_TYPE,
+                      'GIT_SHA': os.environ.get('GIT_SHA')},
+                description='Time series presence detection',
                 sample_input_dataset=datasets[test_set_name])
 
 def main():

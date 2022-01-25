@@ -9,4 +9,4 @@ dependencies:
       - azureml-defaults
       - scikit-learn
       - tensorflow
-      - opencv-python-headless
+      - keras
