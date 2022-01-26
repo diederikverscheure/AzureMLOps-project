@@ -6,12 +6,14 @@ Created on Sun Jan 23 10:27:44 2022
 """
 
 import os
+import sys
+sys.path.append(os.getcwd())
 import pandas as pd
 from dotenv import load_dotenv
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-#from steps.utils import connectWithAzure
+from steps.utils import connectWithAzure
 from azureml.core import Dataset
 from azureml.data.datapath import DataPath
 from sklearn.model_selection import TimeSeriesSplit
