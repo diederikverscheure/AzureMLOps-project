@@ -1,9 +1,4 @@
 import numpy as np
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, BatchNormalization, Conv2D, MaxPooling2D, Flatten, Activation, Dropout
-from tensorflow.keras.utils import to_categorical
-from sklearn.preprocessing import LabelEncoder
-
 from typing import List
 from scipy.signal import savgol_filter
 from scipy.interpolate import interp1d
