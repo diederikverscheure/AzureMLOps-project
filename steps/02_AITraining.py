@@ -76,7 +76,7 @@ def prepareEnvironment(ws):
 
     return env
 
-def prepareTraining(ws, env, compute_target) -> Tuple[Experiment, ScriptRunConfig]:
+def prepareTraining(ws, env, compute_target):
     experiment_name = os.environ.get('EXPERIMENT_NAME')
     script_folder = os.environ.get('SCRIPT_FOLDER')
 
