@@ -7,9 +7,6 @@ import pandas as pd
 import stat
 
 # This time we will need our Tensorflow Keras libraries, as we will be working with the AI training now
-from tensorflow import keras
-from tensorflow.keras.optimizers import SGD
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score
 from sklearn.linear_model import LogisticRegression
 
