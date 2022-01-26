@@ -223,6 +223,7 @@ if __name__ == '__main__':
     # Load data
     ws = connectWithAzure()
     # Set these values to 'false' if you want to skip them.
+    print('Process data:',os.environ.get('PROCESS_DATA'))
     if os.environ.get('PROCESS_DATA') == 'true':
         print('Processing the data')
         prepareDataset(ws)

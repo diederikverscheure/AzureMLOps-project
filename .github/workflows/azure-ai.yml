@@ -29,12 +29,12 @@ on:
         required: true
         default: "true"
       data_prep_skip_process:
-        description: 'Check to skip the processing of the original Data images'
+        description: 'Check to skip the processing of the original data'
         type: boolean
         required: true
         default: "true"
       data_prep_skip_split:
-        description: 'Check to skip the Splitting of the Training and Testiing sets'
+        description: 'Check to skip the Splitting of the training and testing sets'
         type: boolean
         required: true
         default: "false"
