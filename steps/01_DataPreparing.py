@@ -187,7 +187,11 @@ def trainTestSplitData(ws):
     for train_index, test_index in tscv.split(dfi.values):
         print("TRAIN:", train_index, "TEST:", test_index)
         dfi_train, dfi_test = dfi.iloc[train_index], dfi.iloc[test_index]
+    if not os.path.isdir('training_data'):
+        os.mkdir('training_data')
     dfi_train.to_csv('./training_data/dataset.csv')
+    if not os.path.isdir('testing_data'):
+        os.mkdir('testing_data')
     dfi_test.to_csv('./testing_data/dataset.csv')
     
     print('Uploading datasets now ...')

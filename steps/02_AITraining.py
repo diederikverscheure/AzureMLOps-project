@@ -1,20 +1,12 @@
-from ctypes import resize
-from glob import glob
-import json
 import os
-from datetime import datetime
-import math
+import sys
+sys.path.append(os.getcwd())
 import random
-import shutil
-from typing import List, Tuple
-
 from steps.utils import connectWithAzure
-
 from azureml.core import ScriptRunConfig, Experiment, Dataset
 from azureml.core.compute import ComputeTarget, AmlCompute
 from azureml.core.environment import Environment
 from azureml.core.conda_dependencies import CondaDependencies
-
 from dotenv import load_dotenv
 
 
