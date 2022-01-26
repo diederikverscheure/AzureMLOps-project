@@ -9,6 +9,10 @@ import stat
 # This time we will need our Tensorflow Keras libraries, as we will be working with the AI training now
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score
 from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.svm import SVC
+from sklearn.model_selection import GridSearchCV
 
 
 # This AzureML package will allow to log our metrics etc.
@@ -21,11 +25,7 @@ import pickle
 parser = argparse.ArgumentParser()
 parser.add_argument('--training-folder', type=str, dest='training_folder', help='training folder mounting point.',default='../training_data')
 parser.add_argument('--testing-folder', type=str, dest='testing_folder', help='testing folder mounting point.',default='../testing_data')
-parser.add_argument('--max-epochs', type=int, dest='max_epochs', help='The maximum epochs to train.')
 parser.add_argument('--seed', type=int, dest='seed', help='The random seed to use.')
-parser.add_argument('--initial-learning-rate', type=float, dest='initial_lr', help='The initial learning rate to use.')
-parser.add_argument('--batch-size', type=int, dest='batch_size', help='The batch size to use during training.')
-parser.add_argument('--patience', type=int, dest='patience', help='The patience for the Early Stopping.')
 parser.add_argument('--model-type', type=str, dest='model_type', help='The name of the model to use.')
 parser.add_argument('--model-name', type=str, dest='model_name', help='The name of the model to use.')
 args = parser.parse_args()
@@ -37,11 +37,6 @@ print('Training folder:', training_folder)
 testing_folder = args.testing_folder
 print('Testing folder:', testing_folder)
 
-MAX_EPOCHS = args.max_epochs # Int
-SEED = args.seed # Int
-INITIAL_LEARNING_RATE = args.initial_lr # Float
-BATCH_SIZE = args.batch_size # Int
-PATIENCE = args.patience # Int
 MODEL_TYPE = args.model_type # String
 MODEL_NAME = args.model_name # String
 
@@ -76,7 +71,17 @@ os.makedirs('outputs', exist_ok=True,mode=0o777)
 run = Run.get_context()
 
 if MODEL_TYPE == 'logreg':
-    model = LogisticRegression(random_state=SEED).fit(X_train, y_train)
+    clf = LogisticRegression(random_state=args.seed,penalty=args.penalty)
+    # Parameters of pipelines can be set using ‘__’ separated parameter names:
+    param_grid = {'logistic__C': np.logspace(-4, 4, 20),'logistic__penalty': ['l1','l2']}
+elif MODEL_TYPE == 'svc':
+    clf = SVC()
+    param_grid = {}
+    
+model = Pipeline([('scaler', StandardScaler()), ('clf', clf)])
+gcv = GridSearchCV(model, param_grid)
+gcv.fit(X_train,y_train)
+model = gcv.best_estimator_
 
 print("Evaluating model")
 y_pred_test = model.predict(X_test)
@@ -91,7 +96,7 @@ run.log('accuracy_train',accuracy_score(y_train, y_pred_train) )
 run.log('accuracy_test',accuracy_score(y_test, y_pred_test) )
 run.log('f1_train',f1_score(y_train, y_pred_train) )
 run.log('f1_test',f1_score(y_test, y_pred_test) )
-
+run.log('best_params',gcv.best_params_)
 
 ## Log Confusion matrix , see https://docs.microsoft.com/en-us/python/api/azureml-core/azureml.core.run.run?view=azure-ml-py#log-confusion-matrix-name--value--description----
 cmtx = {

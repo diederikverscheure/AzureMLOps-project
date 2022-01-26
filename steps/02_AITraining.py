@@ -16,11 +16,6 @@ from dotenv import load_dotenv
 load_dotenv('.env',override=True)
 
 SEED = int(os.environ.get('RANDOM_SEED'))
-
-INITIAL_LEARNING_RATE = float(os.environ.get('INITIAL_LEARNING_RATE')) # Float value
-MAX_EPOCHS = int(os.environ.get('MAX_EPOCHS'))
-BATCH_SIZE = int(os.environ.get('BATCH_SIZE'))
-PATIENCE = int(os.environ.get('PATIENCE'))
 MODEL_NAME = os.environ.get('MODEL_NAME')
 MODEL_TYPE = os.environ.get('MODEL_TYPE')
 
@@ -90,11 +85,7 @@ def prepareTraining(ws, env, compute_target):
         # You can set these to .as_mount() when not training on local machines, but this should also work.
     '--training-folder', datasets[train_set_name].as_download('./data/training_data'), # Currently, this will always take the last version. You can search a way to specify a version if you want to
     '--testing-folder', datasets[test_set_name].as_download('./data/testing_data'), # Currently, this will always take the last version. You can search a way to specify a version if you want to        
-    '--max-epochs', MAX_EPOCHS,
     '--seed', SEED,
-    '--initial-learning-rate', INITIAL_LEARNING_RATE,
-    '--batch-size', BATCH_SIZE,
-    '--patience', PATIENCE,
     '--model-name', MODEL_NAME,
     '--model-type', MODEL_TYPE]
 
