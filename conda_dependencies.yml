@@ -5,8 +5,7 @@ channels:
 dependencies:
   - python=3.8
   - pip:
-      - 'azureml-dataset-runtime[pandas,fuse]'
       - azureml-defaults
+      - numpy
+      - pandas
       - scikit-learn
-      - tensorflow
-      - keras

@@ -1,6 +1,6 @@
 import os
 
-from utils import connectWithAzure
+from steps.utils import connectWithAzure
 from azureml.core.environment import Environment
 from azureml.core.model import InferenceConfig
 from azureml.core.webservice import AciWebservice
@@ -10,13 +10,13 @@ from dotenv import load_dotenv
 
 # When you work locally, you can use a .env file to store all your environment variables.
 # This line read those in.
-load_dotenv()
+load_dotenv('.env',override=True)
 
-ANIMALS = os.environ.get('ANIMALS').split(',')
 MODEL_NAME = os.environ.get('MODEL_NAME')
+MODEL_TYPE = os.environ.get('MODEL_TYPE')
 LOCAL_DEPLOYMENT = os.environ.get('LOCAL_DEPLOYMENT')
 print(LOCAL_DEPLOYMENT)
-print(type(LOCAL_DEPLOYMENT))
+
 
 def prepareEnv(ws):
     environment_name = os.environ.get('DEPLOYMENT_ENV_NAME')
@@ -30,14 +30,15 @@ def prepareEnv(ws):
 
 def prepareDeployment(ws, environment):
 
-    service_name = os.environ.get('SCRIPT_SERVICE_NAME')
+    service_name = os.environ.get('SCORE_SERVICE_NAME')
     entry_script = os.path.join(os.environ.get('SCRIPT_FOLDER'), 'score.py')
 
     inference_config = InferenceConfig(entry_script=entry_script, environment=environment)
-    aci_config = AciWebservice.deploy_configuration(cpu_cores=1, memory_gb=1)
+    aci_config = AciWebservice.deploy_configuration(cpu_cores=1, memory_gb=1,tags={'type': MODEL_TYPE,
+                              'GIT_SHA': os.environ.get('GIT_SHA')})
 
     # Get our model based on the name we registered in the previous notebook
-    model = Model(ws, MODEL_NAME)
+    model = Model(ws, MODEL_TYPE)
 
     service = Model.deploy(workspace=ws,
                         name=service_name,
@@ -49,7 +50,7 @@ def prepareDeployment(ws, environment):
 
 def downloadLatestModel(ws):
     local_model_path = os.environ.get('LOCAL_MODEL_PATH')
-    model = Model(ws, name=MODEL_NAME)
+    model = Model(ws, name=MODEL_TYPE)
     model.download(local_model_path, exist_ok=True)
     return model
 
