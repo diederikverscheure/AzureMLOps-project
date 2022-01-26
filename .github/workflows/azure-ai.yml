@@ -61,8 +61,8 @@ env:
 
   TRAIN_SET_NAME: training-set
   TEST_SET_NAME: testing-set
-  MODEL_NAME: animal-cnn
-
+  MODEL_NAME: model.pkl
+  MODEL_TYPE: logreg
   SCRIPT_FOLDER: scripts
 
   RANDOM_SEED: 42 # Random values that should be same for all the steps
@@ -139,12 +139,12 @@ jobs:
       MAX_EPOCHS: 50
       BATCH_SIZE: 32
       PATIENCE: 11
-      EXPERIMENT_NAME: animal-classification
+      EXPERIMENT_NAME: presence_detection
 
       ## Compute cluster parts
       AML_COMPUTE_CLUSTER_NAME: cpu-cluster
       AML_COMPUTE_CLUSTER_MIN_NODES: 0
-      AML_COMPUTE_CLISTER_MAX_NODES: 4
+      AML_COMPUTE_CLUSTER_MAX_NODES: 4
       AML_COMPUTE_CLUSTER_SKU: STANDARD_D2_V2
 
       TRAIN_ON_LOCAL: ${{ github.event.inputs.train_on_local }} # If you want to train on your local runner, set this to True.
