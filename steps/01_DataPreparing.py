@@ -222,6 +222,7 @@ def trainTestSplitData(ws):
     
 if __name__ == '__main__':
     # Load data
+    print(os.getcwd())
     ws = connectWithAzure()
     # Set these values to 'false' if you want to skip them.
     print('Process data:',os.environ.get('PROCESS_DATA'))
