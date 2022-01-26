@@ -61,12 +61,19 @@ def main():
         print('Deploying locally.')
         model = downloadLatestModel(ws)
         print(f'Downloaded the model {model.id} locally. You can now proceed to build the Docker image.')
+        return None
     else:
         print('Deploying on Azure.')
         environment = prepareEnv(ws)
         service = prepareDeployment(ws, environment)
-        service.wait_for_deployment(show_output=True)
-
+        try:
+            service.wait_for_deployment(show_output=True)
+        except:
+            print(service.get_logs())
+        return service
 
 if __name__ == '__main__':
-    main()
+    service = main()
+    
+    # Evaluate with
+    # curl -X POST http://2d91f06a-4868-4ecc-9ea4-6517d7b5c9f0.westeurope.azurecontainer.io/score -H 'Content-Type: application/json' -d '{"data": [500,5]}'

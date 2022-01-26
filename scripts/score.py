@@ -12,7 +12,7 @@ def init():
 
     # The AZUREML_MODEL_DIR environment variable indicates
     # a directory containing the model file you registered.
-    model_path = os.path.join(os.environ.get('AZUREML_MODEL_DIR'), 'outputs/model.pkl')
+    model_path = os.path.join(os.environ.get('AZUREML_MODEL_DIR'), 'model.pkl')
     print(os.listdir(os.environ.get('AZUREML_MODEL_DIR')))
     print(model_path)
     with open(model_path,'rb') as f:
