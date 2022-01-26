@@ -53,15 +53,14 @@ on:
 env:
   CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
 
-  CLIENT_ID: c2f7b98e-f968-48a5-b0d9-f2e8d80edebd # Change this !
-  TENANT_ID: 4ded4bb1-6bff-42b3-aed7-6a36a503bf7a # Change this !
-  WORKSPACE_NAME: segersnathan # Change this !
-  RESOURCE_GROUP: NathanReserve # Change this !
-  SUBSCRIPTION_ID: 7c50f9c3-289b-4ae0-a075-08784b3b9042 # Change this !
+  CLIENT_ID: b1ae2063-5a9d-43e5-8b45-a69ef17ffead
+  TENANT_ID: 4ded4bb1-6bff-42b3-aed7-6a36a503bf7a
+  WORKSPACE_NAME: verscheure-diederik
+  RESOURCE_GROUP: 04_AzureML
+  SUBSCRIPTION_ID: 57f08202-ead3-48ed-9915-dd4e4af64969
 
-  ANIMALS: cats,dogs,pandas # As we have three classes, let's just defined them here. This way we can easily loop over them later.
-  TRAIN_SET_NAME: animals-training-set
-  TEST_SET_NAME: animals-testing-set
+  TRAIN_SET_NAME: training-set
+  TEST_SET_NAME: testing-set
   MODEL_NAME: animal-cnn
 
   SCRIPT_FOLDER: scripts
@@ -102,7 +101,7 @@ jobs:
     env:
       DATA_FOLDER: data
       DATASET_VERSION: 'latest'
-      TRAIN_TEST_SPLIT_FACTOR: 0.20
+      TRAIN_TEST_SPLIT_FACTOR: 0.33
       PROCESS_IMAGES: ${{ github.event.inputs.data_prep_skip_process }} # Make the pipeline skip processing the images
       SPLIT_IMAGES: ${{ github.event.inputs.data_prep_skip_split }} # Make the pipeline skip splitting the images
 
