@@ -6,6 +6,8 @@ dependencies:
   - python=3.8
   - pip:
       - azureml-defaults
+      - python-dotenv
       - numpy
+      - scipy
       - pandas
       - scikit-learn
