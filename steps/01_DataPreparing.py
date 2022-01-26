@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from utils import connectWithAzure
+from steps.utils import connectWithAzure
 from azureml.core import Dataset
 from azureml.data.datapath import DataPath
 from sklearn.model_selection import TimeSeriesSplit
@@ -179,6 +179,7 @@ def trainTestSplitData(ws):
     default_datastore = ws.get_default_datastore()
     dataset = Dataset.get_by_name(ws,'Project_data')
     print('Starting to process dataset')
+    dataset.download('processed_data')
     dfi = pd.read_csv('./processed_data/dataset.csv',index_col=0,parse_dates=[0])
     tscv = TimeSeriesSplit(n_splits=int(1/TRAIN_TEST_SPLIT_FACTOR))
     for train_index, test_index in tscv.split(dfi.values):
