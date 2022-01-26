@@ -12,3 +12,4 @@ dependencies:
       - pandas
       - scikit-learn
       - tensorflow
+      - keras

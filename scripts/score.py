@@ -1,9 +1,6 @@
 import os
 import numpy as np
 import json
-#import matplotlib.pyplot as plt
-#from tensorflow import keras
-#from tensorflow.keras.models import load_model
 import pickle
 from sklearn.linear_model import LogisticRegression
 
