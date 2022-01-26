@@ -91,7 +91,6 @@ print(classification_report(y_test, y_pred_test, target_names=['not present','pr
 cf_matrix = confusion_matrix(y_test, y_pred_test)
 print(cf_matrix)
 
-# We could use this, but we are logging realtime with the callback!
 run.log('accuracy_train',accuracy_score(y_train, y_pred_train) )
 run.log('accuracy_test',accuracy_score(y_test, y_pred_test) )
 run.log('f1_train',f1_score(y_train, y_pred_train) )

@@ -39,7 +39,7 @@ on:
         required: true
         default: "true"
       train_on_local:
-        description: 'Should we train the AI model on the runner? Otherwise we train on Azure cloud machine'
+        description: 'Train the AI model on the runner? Otherwise on Azure cloud machine'
         type: boolean
         required: true
         default: "false"
@@ -151,7 +151,7 @@ jobs:
 
       ## Training environment
       CONDA_DEPENDENCIES_PATH: conda_dependencies.yml
-      TRAINING_ENV_NAME: animals-classification-env-training
+      TRAINING_ENV_NAME: presence_detection-env-training
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
