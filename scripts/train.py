@@ -73,13 +73,13 @@ run = Run.get_context()
 if MODEL_TYPE == 'logreg':
     clf = LogisticRegression(random_state=args.seed,solver='saga')
     # Parameters of pipelines can be set using ‘__’ separated parameter names:
-    param_grid = {'clf__C': np.logspace(-4, 4, 20),'clf__penalty': ['l1','l2','elasticnet','none']}
+    param_grid = {'clf__C': np.logspace(-2, 2, 10),'clf__penalty': ['l1','l2','elasticnet','none']}
 elif MODEL_TYPE == 'svc':
     clf = SVC()
-    param_grid = {'clf__C': np.logspace(-4, 4, 20), 'kernel': ('linear', 'rbf')}
+    param_grid = {'clf__C': np.logspace(-3, 3, 8), 'clf__kernel': ('linear', 'rbf')}
     
 model = Pipeline([('scaler', StandardScaler()), ('clf', clf)])
-gcv = GridSearchCV(model, param_grid)
+gcv = GridSearchCV(model, param_grid,verbose=4)
 gcv.fit(X_train,y_train)
 model = gcv.best_estimator_
 

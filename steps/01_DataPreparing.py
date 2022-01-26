@@ -136,6 +136,18 @@ def prepareDataset(ws):
                         'sensor.openweathermap_temperature': 'temperature_outside',\
                         'binary_sensor.shellydw2_aac009_door': 'window_living'},inplace=True)        
 
+    
+    keep = ['co2_living','temperature_living','presence_living','window_living',\
+            'co2_bedroom','presence_bedroom',\
+            'co2_outside','temperature_outside']
+    print('Before resampling',dfi.shape)
+    dfs = dfi[keep].dropna().resample('2T').mean().interpolate(method='values')
+    for p in ['presence_living','presence_bedroom']:
+        dfs.loc[dfs[p]>0.5,p] = 1
+        dfs.loc[dfs[p]<=0.5,p] = 0
+    print('After resampling',dfs.shape)
+    dfs.to_csv('./processed_data/dataset.csv') 
+
     # Plot processed results
     plt.close('all')
     f, ax = plt.subplots(1,1)
@@ -151,14 +163,14 @@ def prepareDataset(ws):
     f, ax = plt.subplots(2,1)
     ax[0].plot(dfi.index,dfi['co2_living'])
     ax[0].fill_between(dfi.index,0,3000,dfi['presence_living']>0.5,color='green',alpha=0.2)
+    ax[0].set_title('CO2 living')
+    ax[0].set_ylabel('CO2 concentration [ppm]')
     
     ax[1].plot(dfi.index,dfi['co2_bedroom'])
     ax[1].fill_between(dfi.index,0,3000,dfi['presence_bedroom']>0.5,color='red',alpha=0.2)
-    
-    keep = ['co2_living','temperature_living','presence_living','window_living',\
-            'co2_bedroom','presence_bedroom',\
-            'co2_outside','temperature_outside']
-    dfi[keep].dropna().to_csv('./processed_data/dataset.csv') 
+    ax[1].set_title('CO2 bedroom')
+    ax[1].set_ylabel('CO2 concentration [ppm]')
+
 
     # Upload the directory as a new dataset
     print('Uploading dataset now ...')
