@@ -185,8 +185,8 @@ jobs:
 
     env:
       DEPLOYMENT_DEPENDENCIES: deployment_environment.yml
-      DEPLOYMENT_ENV_NAME: animals-classification-env-deployment
-      SCORE_SERVICE_NAME: animals-classification-svc
+      DEPLOYMENT_ENV_NAME: presence_detection-env-deployment
+      SCORE_SERVICE_NAME: presence-detection
       LOCAL_MODEL_PATH: api/outputs
       LOCAL_DEPLOYMENT: ${{ github.event.inputs.kubernetes_deployment }}
 

@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.append(os.getcwd())
 
 from steps.utils import connectWithAzure
 from azureml.core.environment import Environment

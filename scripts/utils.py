@@ -8,13 +8,13 @@ def getTargets(df):
     return np.hstack((df['presence_living'].values,df['presence_bedroom'].values))
 
 def smooth(index,y,derivative=1):
-    dt = (index-index[0]).total_seconds()
-    dtr = np.linspace(dt[0],dt[-1],len(dt))
-    f = interp1d(dt,y,'linear')
-    dxr = savgol_filter(f(dtr),101,1,derivative)
-    fr = interp1d(dtr,dxr,'linear')
-    dx = fr(dt)
+    dt = (index[1:]-index[0:-1]).total_seconds()
+    dx = savgol_filter(y,11,1,derivative,delta=np.mean(dt),mode='nearest')
     return dx
+
+def getScoreFeatures(df):
+    df['deriv'] = smooth(df.index,df.iloc[:,0]-400,derivative=1)
+    return df.iloc[:,0:2].values
     
 def getFeatures(df):
     df['delta_living']= df['co2_living']-df['co2_outside']

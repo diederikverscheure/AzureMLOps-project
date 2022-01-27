@@ -1,8 +1,17 @@
 import os
 import numpy as np
+import pandas as pd
 import json
 import pickle
+from utils import *
+
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score
 from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.svm import SVC
+from sklearn.model_selection import GridSearchCV
+
 
 def init():
     global model
@@ -17,7 +26,10 @@ def init():
 
 def run(json_data):
     data = json.loads(json_data)
-    X = np.asarray(data['data']).reshape(-1,2)
+    df = pd.DataFrame(data)
+    df.loc[:,df.columns[0]] = pd.to_datetime(df[df.columns[0]])
+    df.set_index(df.columns[0],inplace=True)
+    X = getScoreFeatures(df)
     likelyhood = model.predict_proba(X)
     return 'Presence likelihood = ' + str(likelyhood[0,1])
 
