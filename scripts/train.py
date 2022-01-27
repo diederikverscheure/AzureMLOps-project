@@ -1,10 +1,12 @@
-import argparse
 import os
-from glob import glob
+import sys
+sys.path.append(os.getcwd())
+import argparse
 import random
 import numpy as np
 import pandas as pd
 import stat
+import pickle
 
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score
 from sklearn.linear_model import LogisticRegression
@@ -16,10 +18,9 @@ from sklearn.model_selection import GridSearchCV
 
 # This AzureML package will allow to log our metrics etc.
 from azureml.core import Run
-
 # Important to load in the utils as well!
-from utils import getFeatures, getTargets
-import pickle
+from utils import getTargets, getFeatures, getScoreFeatures
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--training-folder', type=str, dest='training_folder', help='training folder mounting point.',default='../training_data')
@@ -74,7 +75,7 @@ if MODEL_TYPE == 'logreg':
     # Parameters of pipelines can be set using ‘__’ separated parameter names:
     param_grid = {'clf__C': np.logspace(-2, 2, 10),'clf__penalty': ['l1','l2','elasticnet','none']}
 elif MODEL_TYPE == 'svc':
-    clf = SVC()
+    clf = SVC(probability=True)
     param_grid = {'clf__C': np.logspace(-3, 3, 8), 'clf__kernel': ('linear', 'rbf')}
     
 model = Pipeline([('scaler', StandardScaler()), ('clf', clf)])

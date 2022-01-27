@@ -78,4 +78,4 @@ if __name__ == '__main__':
     service = main()
     
     # Evaluate with
-    # curl -X POST http://2d91f06a-4868-4ecc-9ea4-6517d7b5c9f0.westeurope.azurecontainer.io/score -H 'Content-Type: application/json' -d '{"data": [500,5]}'
+    # curl -X POST http://2d91f06a-4868-4ecc-9ea4-6517d7b5c9f0.westeurope.azurecontainer.io/score -H 'Content-Type: application/json' -d '{"dt": ["2020-01-01 09:00:00","2020-01-01 09:00:05","2020-01-01 09:00:10","2020-01-01 09:00:15","2020-01-01 09:00:20","2020-01-01 09:00:25","2020-01-01 09:00:30","2020-01-01 09:00:35","2020-01-01 09:00:40","2020-01-01 09:00:45"], "co2": [100,200,300,400,500,600,700,800,900,1000]}'
