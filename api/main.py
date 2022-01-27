@@ -1,9 +1,9 @@
 import numpy as np
-from PIL import Image
-from tensorflow import keras
 from tensorflow.keras.models import load_model
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+import pickle
+
 
 app = FastAPI()
 app.add_middleware(
@@ -14,16 +14,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-ANIMALS = ['Cat', 'Dog', 'Panda'] # Animal names here
+with open('outputs/model.pkl','rb') as f:
+    model = pickle.load(f)
 
-model = load_model('outputs/animal-cnn-test') # Model_name here!
+def smooth(index,y,derivative=1):
+    dt = (index[1:]-index[0:-1]).total_seconds()
+    dx = savgol_filter(y,11,1,derivative,delta=np.mean(dt),mode='nearest')
+    return dx
 
-@app.post('/upload/image')
-async def uploadImage(img: UploadFile = File(...)):
-    original_image = Image.open(img.file)
-    original_image = original_image.resize((64, 64))
-    images_to_predict = np.expand_dims(np.array(original_image), axis=0)
-    predictions = model.predict(images_to_predict)
-    classifications = predictions.argmax(axis=1)
+def getScoreFeatures(df):
+    df['deriv'] = smooth(df.index,df.iloc[:,0]-400,derivative=1)
+    return df.iloc[:,0:2].values
+    
 
-    return ANIMALS[classifications.tolist()[0]]
+@app.post('/likelyhood')
+async def likelyhood(str: data):
+    data = json.loads(json_data)
+    df = pd.DataFrame(data)
+    df.loc[:,df.columns[0]] = pd.to_datetime(df[df.columns[0]])
+    df.set_index(df.columns[0],inplace=True)
+    X = getScoreFeatures(df)
+    likelyhood = model.predict_proba(X)
+    return 'Presence likelihood = ' + str(likelyhood[:,1])    
+  
