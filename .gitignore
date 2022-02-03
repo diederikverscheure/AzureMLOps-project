@@ -8,8 +8,6 @@ data
 Notes.txt
 
 **/__pycache__
-api/outputs/**
-outputs/model.pkl
 processed_data/dataset.csv
 testing_data/dataset.csv
 training_data/dataset.csv
