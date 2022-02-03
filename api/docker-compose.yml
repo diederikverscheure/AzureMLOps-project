@@ -1,0 +1,7 @@
+services: # Contain all the Docker services you want to start
+    api: # Create a service called `api`
+        build: # Make sure to build the Docker image if it does not exist ...
+            context: .
+        image: ghcr.io/diederikverscheure/azuremlops-project:1.0.0 # Name it `mlopsathome-exam`
+        ports: # Enter a list of all the ports that should be mapped
+            - 5000:80 # Map port 5000 on our VIRTUAL MACHINE to port 80 on our DOCKER CONTAINER

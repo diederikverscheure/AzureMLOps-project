@@ -1,5 +1,5 @@
 import numpy as np
-from tensorflow.keras.models import load_model
+from sklearn.linear_model import LogisticRegression
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 import pickle
@@ -26,7 +26,6 @@ def getScoreFeatures(df):
     df['deriv'] = smooth(df.index,df.iloc[:,0]-400,derivative=1)
     return df.iloc[:,0:2].values
     
-
 @app.post('/likelyhood')
 async def likelyhood(str: data):
     data = json.loads(json_data)
